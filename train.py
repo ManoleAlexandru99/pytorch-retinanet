@@ -97,10 +97,11 @@ def main(args=None):
         if torch.cuda.is_available():
             retinanet = retinanet.cuda()
 
-    if torch.cuda.is_available():
-        retinanet = torch.nn.DataParallel(retinanet).cuda()
-    else:
-        retinanet = torch.nn.DataParallel(retinanet)
+    if parser.saved_model is None:
+        if torch.cuda.is_available():
+            retinanet = torch.nn.DataParallel(retinanet).cuda()
+        else:
+            retinanet = torch.nn.DataParallel(retinanet)
 
     retinanet.training = True
 
@@ -116,7 +117,7 @@ def main(args=None):
     print('Num training images: {}'.format(len(dataset_train)))
 
     for epoch_num in range(parser.epochs):
-
+        print('Epoch: {}:'.format(epoch_num))
         retinanet.train()
         retinanet.module.freeze_bn()
 
@@ -148,11 +149,11 @@ def main(args=None):
                 loss_hist.append(float(loss))
 
                 epoch_loss.append(float(loss))
-
+                '''
                 print(
                     'Epoch: {} | Iteration: {} | Classification loss: {:1.5f} | Regression loss: {:1.5f} | Running loss: {:1.5f}'.format(
                         epoch_num, iter_num, float(classification_loss), float(regression_loss), np.mean(loss_hist)))
-
+                '''
                 del classification_loss
                 del regression_loss
             except Exception as e:

@@ -109,7 +109,7 @@ class CocoDataset(Dataset):
         return annotations
 
     def coco_label_to_label(self, coco_label):
-        return self.coco_labels_inverse[coco_label]
+        return self.coco_labels_inverse[coco_label+1]
 
 
     def label_to_coco_label(self, label):
