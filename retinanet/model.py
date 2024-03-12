@@ -327,7 +327,15 @@ def resnet50(num_classes, pretrained=False, **kwargs):
     """
     model = ResNet(num_classes, Bottleneck, [3, 4, 6, 3], **kwargs)
     if pretrained:
-        model.load_state_dict(model_zoo.load_url(model_urls['resnet50'], model_dir='.'), strict=False)
+        # Possible fix from: https://discuss.pytorch.org/t/how-to-load-part-of-pre-trained-model/1113/2
+        model_dict = model.state_dict()
+        # 1. filter out unnecessary keys
+        pretrained_dict = {k: v for k, v in pretrained_dict.items() if k in model_zoo.load_url(model_urls['resnet50'], model_dir='.')}
+        # 2. overwrite entries in the existing state dict
+        model_dict.update(pretrained_dict) 
+        # 3. load the new state dict
+        model.load_state_dict(pretrained_dict)
+        # model.load_state_dict(model_zoo.load_url(model_urls['resnet50'], model_dir='.'), strict=False)
     return model
 
 
