@@ -118,7 +118,7 @@ class CocoDataset(Dataset):
         return annotations
 
     def coco_label_to_label(self, coco_label):
-        return self.coco_labels_inverse[coco_label+1] #or without 1 depending on datasetgen
+        return self.coco_labels_inverse[coco_label] #or +1 depending on datasetgen
 
 
     def label_to_coco_label(self, label):
@@ -320,7 +320,7 @@ def collater(data):
     max_width = np.array(widths).max()
     max_height = np.array(heights).max()
 
-    padded_imgs = torch.zeros(batch_size, max_width, max_height, 3)
+    padded_imgs = torch.zeros(batch_size, max_width, max_height, 4)
 
     for i in range(batch_size):
         img = imgs[i]
@@ -407,8 +407,8 @@ class Augmenter(object):
 class Normalizer(object):
 
     def __init__(self):
-        self.mean = np.array([[[0.485, 0.456, 0.406]]])
-        self.std = np.array([[[0.229, 0.224, 0.225]]])
+        self.mean = np.array([[[0.485, 0.456, 0.406, 0]]])
+        self.std = np.array([[[0.229, 0.224, 0.225, 1]]])
 
     def __call__(self, sample):
 

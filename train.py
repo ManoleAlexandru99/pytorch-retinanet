@@ -83,7 +83,7 @@ def main(args=None):
         elif parser.depth == 34:
             retinanet = model.resnet34(num_classes=dataset_train.num_classes(), pretrained=True)
         elif parser.depth == 50:
-            retinanet = model.resnet50(num_classes=dataset_train.num_classes(), pretrained=True)
+            retinanet = model.resnet50(num_classes=dataset_train.num_classes(), pretrained=False)
         elif parser.depth == 101:
             retinanet = model.resnet101(num_classes=dataset_train.num_classes(), pretrained=True)
         elif parser.depth == 152:
