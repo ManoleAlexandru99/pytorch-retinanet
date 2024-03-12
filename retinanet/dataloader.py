@@ -64,9 +64,9 @@ class CocoDataset(Dataset):
 
     def __getitem__(self, idx):
 
-        img, mask = self.load_image(idx)
+        img = self.load_image(idx)
         annot = self.load_annotations(idx)
-        sample = {'img': img, 'mask':mask, 'annot': annot}
+        sample = {'img': img, 'annot': annot}
         if self.transform:
             sample = self.transform(sample)
 
@@ -76,9 +76,9 @@ class CocoDataset(Dataset):
         image_info = self.coco.loadImgs(self.image_ids[image_index])[0]
         path       = os.path.join(self.root_dir, 'images', self.set_name, image_info['file_name'])
         mask_path  = os.path.join(self.root_dir, 'masks', self.set_name, image_info['file_name'])
-        print(mask_path)
         mask = cv2.imread(mask_path, cv2.IMREAD_GRAYSCALE)
         mask = mask.astype(np.float32) / 255.0
+        mask = np.expand_dims(mask, axis=2)
         img = skimage.io.imread(path)
 
 
