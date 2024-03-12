@@ -17,6 +17,8 @@ import skimage.transform
 import skimage.color
 import skimage
 
+import cv2
+
 from PIL import Image
 
 
@@ -62,9 +64,9 @@ class CocoDataset(Dataset):
 
     def __getitem__(self, idx):
 
-        img = self.load_image(idx)
+        img, mask = self.load_image(idx)
         annot = self.load_annotations(idx)
-        sample = {'img': img, 'annot': annot}
+        sample = {'img': img, 'mask':mask, 'annot': annot}
         if self.transform:
             sample = self.transform(sample)
 
@@ -73,12 +75,19 @@ class CocoDataset(Dataset):
     def load_image(self, image_index):
         image_info = self.coco.loadImgs(self.image_ids[image_index])[0]
         path       = os.path.join(self.root_dir, 'images', self.set_name, image_info['file_name'])
+        mask_path  = os.path.join(self.root_dir, 'masks', self.set_name, image_info['file_name'])
+        print(mask_path)
+        mask = cv2.imread(mask_path, cv2.IMREAD_GRAYSCALE)
+        mask = mask.astype(np.float32) / 255.0
         img = skimage.io.imread(path)
+
 
         if len(img.shape) == 2:
             img = skimage.color.gray2rgb(img)
 
-        return img.astype(np.float32)/255.0
+        img = img.astype(np.float32)/255.0
+        img = np.concatenate((img, mask), axis=2)
+        return img 
 
     def load_annotations(self, image_index):
         # get ground truth annotations
@@ -109,7 +118,7 @@ class CocoDataset(Dataset):
         return annotations
 
     def coco_label_to_label(self, coco_label):
-        return self.coco_labels_inverse[coco_label+1]
+        return self.coco_labels_inverse[coco_label+1] #or without 1 depending on datasetgen
 
 
     def label_to_coco_label(self, label):
