@@ -81,4 +81,6 @@ def evaluate_coco(dataset, model, threshold=0.05):
 
         model.train()
 
-        return
+        print("Stats:", coco_eval.stats)
+        print("Eval:", coco_eval.eval)
+        return coco_eval.eval
