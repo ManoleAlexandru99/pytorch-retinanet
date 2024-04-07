@@ -12,12 +12,14 @@ def evaluate_coco(dataset, model, threshold=0.05):
         # start collecting results
         results = []
         image_ids = []
-
+        print("STARTING EVAL:")
         for index in range(len(dataset)):
             data = dataset[index]
             scale = data['scale']
 
             # run network
+            retina_input = data['img']
+            print("SHAPE OF INPUT DURING EVAL", retina_input.shape)
             if torch.cuda.is_available():
                 scores, labels, boxes = model(data['img'].permute(2, 0, 1).cuda().float().unsqueeze(dim=0))
             else:
@@ -62,6 +64,7 @@ def evaluate_coco(dataset, model, threshold=0.05):
             # print progress
             print('{}/{}'.format(index, len(dataset)), end='\r')
 
+        print("RESULTS:")
         if not len(results):
             return
 
